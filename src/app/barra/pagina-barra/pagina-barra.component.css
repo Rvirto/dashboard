@@ -1,0 +1,7 @@
+.imagem{
+    width: 75px;
+    height:40px;
+    background-image: url(../../../assets/fema.png);
+    background-size: cover;
+    margin-right:15px;
+}

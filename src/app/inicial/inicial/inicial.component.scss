@@ -1,0 +1,13 @@
+.plus {
+    margin-top: 15%;
+    margin-left: 40%;
+    width: 35vh;
+    height: 35vh;
+    background-image: url(../../../assets/plus.png);
+}
+
+@media only screen and (min-width: 765px) {
+    plus {
+      margin-right: 150%
+    }
+  }
