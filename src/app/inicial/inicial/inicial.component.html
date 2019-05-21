@@ -5,8 +5,49 @@
       <div class="card-body">
         <h5 class="card-title">Dashboard</h5>
         <p class="card-text">Você não possui nenhum Dashboard ainda. Que tal criar um?</p>
-        <div class="plus" style="cursor: pointer;"></div>
+        <div class="plus" style="cursor: pointer;" (click)="open(content)"></div>
       </div>
     </div>
   </div>
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">New Dashboard</h4>
+      <button type="button" class="close" aria-label="Close"
+      (click)="modal.dismiss()">  
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+
+            <mat-form-field class="ui-g-12 ui-md-12 ui-sm-12">
+                <textarea matInput placeholder="Dê um nome ao seu Dashboard"></textarea>
+              </mat-form-field>
+
+          <div class="ui-g-6 ui-md-6 ui-sm-12">
+            <input [(colorPicker)]="corDoDashboard" class="input-cor" 
+            [style.background]="corDoDashboard" [cpColorMode]="corDoDashboard"/>
+            <label style="margin-left: 3px; color: gray;">Cor do Dashboard</label>
+          </div>
+
+          <div class="ui-g-6 ui-md-6 ui-sm-12">
+            <button class="input-icon"
+                  (iconPickerSelect)="onIconPickerSelect($event)"
+                  [ipPosition]="'bottom'"
+                  [iconPicker]="icon"
+                  [ipFallbackIcon]="fallbackIcon"
+                  [ngClass]="iconCss.value"
+                  [formGroup]="myFormGroup"></button>
+            <label style="margin-left: 3px; color: gray;">Ícone do Dashboard</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark">
+          <i class="fa fa-plus-circle"></i> Criar</button>
+    </div>
+  </ng-template>
 </div>
