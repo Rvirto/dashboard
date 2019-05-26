@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { InicialModule } from './inicial/inicial.module';
 import { ToastyModule } from 'ng2-toasty';
 import { BarraModule } from './barra/barra.module';
-import { DashboardInterativoModule } from './dashboard-interativo/dashboard-interativo.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,6 @@ import { DashboardInterativoModule } from './dashboard-interativo/dashboard-inte
     AppRoutingModule,
     InicialModule,
     BarraModule,
-    DashboardInterativoModule,
     BrowserAnimationsModule,
 
     ToastyModule.forRoot()

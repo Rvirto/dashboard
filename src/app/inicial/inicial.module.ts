@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconPickerModule } from 'ngx-icon-picker';
+import { DialogModule } from 'primeng/components/dialog/dialog';
 
 @NgModule({
   declarations: [InicialComponent],
@@ -22,7 +23,8 @@ import { IconPickerModule } from 'ngx-icon-picker';
     ColorPickerModule,
     FormsModule,
     IconPickerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DialogModule
   ],
   exports: [
     InicialComponent
