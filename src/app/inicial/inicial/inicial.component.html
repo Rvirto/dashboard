@@ -33,8 +33,8 @@
           </div>
 
           <div class="ui-g-6 ui-md-6 ui-sm-12">
-            <button class="input-icon fa fa-pie-chart"
-                    (click)="showDialog()"></button>
+            <button class="input-icon {{icon}}"
+                    (click)="openIcon(iconModal)"></button>
             <label style="margin-left: 3px; color: gray;">Ícone do Dashboard</label>
           </div>
         </div>
@@ -45,9 +45,30 @@
           <i class="fa fa-plus-circle"></i> Criar</button>
     </div>
   </ng-template>
+
+  <ng-template #iconModal let-modalIcon>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modalIcon-basic-title">Icon Picker</h4>
+      <button type="button" class="close" aria-label="Close"
+      (click)="modalIcon.dismiss()">  
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+          <div  *ngFor="let icon of icons">
+              <div class="ui-g-1 ui-md-2 ui-sm-3">
+                <button class="icon-picker-list"  
+                (click)="atualizarIcon(icon.icon)">
+                <i [class]="icon.icon" style="margin-left: 6px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
 </div>
 
-<p-dialog header="Choose Icon" [(visible)]="abrirDialogIcon"
- [style]="{width: '300px', height: '200px'}">
-  Content
-</p-dialog>
