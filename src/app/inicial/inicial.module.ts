@@ -10,6 +10,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconPickerModule } from 'ngx-icon-picker';
 import { DialogModule } from 'primeng/components/dialog/dialog';
+import { GridsterModule } from 'angular-gridster2';
+import { TabMenuModule } from 'primeng/components/tabmenu/tabmenu';
 
 @NgModule({
   declarations: [InicialComponent],
@@ -24,7 +26,9 @@ import { DialogModule } from 'primeng/components/dialog/dialog';
     FormsModule,
     IconPickerModule,
     ReactiveFormsModule,
-    DialogModule
+    DialogModule,
+    GridsterModule,
+    TabMenuModule
   ],
   exports: [
     InicialComponent
