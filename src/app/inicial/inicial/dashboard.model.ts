@@ -10,4 +10,5 @@ export class Dashboard {
         this.codigo = codigo;
         this.widgets = widgets;
     }
+
 }

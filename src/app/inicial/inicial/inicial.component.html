@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <p-tabMenu [model]="itensDashboard" [activeItem]="dashboardInicial" *ngIf="!hasDashboards">
+  <p-tabMenu [model]="tabMenuDashboard" [activeItem]="dashboardInicial" *ngIf="!hasDashboards">
     <ng-template pTemplate="item" let-item let-i="index">
         <a (click)="switchDashboard($event, i)">
         <div [ngClass]="item.icon"
@@ -19,6 +19,13 @@
     </a>
     </ng-template>
   </p-tabMenu>
+
+  <div style="height: 80vh;">
+    <gridster [options]="options" *ngIf="!hasDashboards" style="border-radius: 5px;">
+      <gridster-item [item]="item" *ngFor="let item of widgets">
+      </gridster-item>
+    </gridster>
+  </div>
 
   <ng-template #content let-modal>
     <div class="modal-header">
