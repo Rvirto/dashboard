@@ -12,6 +12,7 @@ import { IconPickerModule } from 'ngx-icon-picker';
 import { DialogModule } from 'primeng/components/dialog/dialog';
 import { GridsterModule } from 'angular-gridster2';
 import { TabMenuModule } from 'primeng/components/tabmenu/tabmenu';
+import { InicialServiceService } from './inicial/inicial-service.service';
 
 @NgModule({
   declarations: [InicialComponent],
@@ -32,6 +33,9 @@ import { TabMenuModule } from 'primeng/components/tabmenu/tabmenu';
   ],
   exports: [
     InicialComponent
+  ],
+  providers: [
+    InicialServiceService
   ]
 })
 export class InicialModule { }

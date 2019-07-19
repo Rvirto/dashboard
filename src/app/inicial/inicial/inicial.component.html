@@ -3,7 +3,7 @@
   <div class="ui-g-12" *ngIf="hasDashboards">
     <div class="card" style="height: 85vh">
       <div class="card-body">
-        <h5 class="card-title">Dashboard</h5>
+        <h5 class="card-title">Dashboard {{ event }}</h5>
         <p class="card-text">Você não possui nenhum Dashboard ainda. Que tal criar um?</p>
         <div class="plus" style="cursor: pointer;" (click)="open(content)"></div>
       </div>
@@ -12,7 +12,7 @@
 
   <p-tabMenu [model]="tabMenuDashboard" [activeItem]="dashboardInicial" *ngIf="!hasDashboards">
     <ng-template pTemplate="item" let-item let-i="index">
-        <a (click)="switchDashboard($event, i)">
+        <a (click)="switchDashboard($event, i, content)">
         <div [ngClass]="item.icon"
          *ngIf="item.icon" style="font-size: 25px;">
          {{item.label}}</div>

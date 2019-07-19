@@ -9,7 +9,8 @@ import {
 } from "angular-gridster2";
 import { Dashboard } from "./dashboard.model";
 import { MenuItem } from "primeng/components/common/menuitem";
-import { style } from '@angular/animations';
+import { style } from "@angular/animations";
+import { InicialServiceService } from "./inicial-service.service";
 
 @Component({
   selector: "app-inicial",
@@ -24,9 +25,10 @@ export class InicialComponent implements OnInit {
   public content: any;
   public dashboards = null;
   public dashboard: Dashboard = null;
+  public dashs: Dashboard[] = [];
   public hasDashboards: boolean;
   public tabMenuDashboard: MenuItem[] = [];
-  public dashboardInicial: MenuItem;
+  public tabMenu: MenuItem[] = [];
   public isPlusDashboard: boolean = false;
   public index: number;
   public cont: number = 0;
@@ -555,20 +557,55 @@ export class InicialComponent implements OnInit {
   public widgets: GridsterItem[];
   public event: any;
 
-  constructor(private router: Router, private modalService: NgbModal) {}
+  constructor(
+    private router: Router,
+    private modalService: NgbModal,
+    private inicialService: InicialServiceService
+  ) {}
 
   ngOnInit(): void {
-    this.hasDashboards = false;
-    if (this.dashboards == null) {
-      this.hasDashboards = true;
-    }
-
-    this.dashboards = new Map();
+    this.iniciandoDashboard();
 
     this.options = {
       itemChangeCallback: this.itemChange,
-      itemResizeCallback: this.itemResize,
+      itemResizeCallback: this.itemResize
     };
+  }
+
+  public iniciandoDashboard() {
+    this.inicialService.buscarTabMenu().subscribe(
+      response => {
+        this.tabMenuDashboard = response;
+        if (this.tabMenuDashboard != null && this.tabMenuDashboard != []) {
+          this.tabMenuDashboard.push({ icon: "fa fa-plus", id: "999" });
+        }
+      },
+      erro => {
+        console.log("Deu ruim");
+      }
+    );
+
+    this.inicialService.buscarDashboard().subscribe(
+      response => {
+        this.dashs = response;
+
+        this.dashboards = new Map();
+        this.dashs.forEach(element => {
+          this.dashboards.set(element.codigo, element);
+          this.cont = element.codigo;
+        });
+
+        this.hasDashboards = false;
+        if (this.dashs == null || this.dashs == []) {
+          this.hasDashboards = true;
+        } else {
+          this.widgets = this.dashs[0].widgets;
+        }
+      },
+      erro => {
+        console.log("Deu ruim");
+      }
+    );
   }
 
   public criarDashboard() {
@@ -581,54 +618,65 @@ export class InicialComponent implements OnInit {
         this.event.preventDefault();
       }
     }
-    this.tabMenuDashboard.push({
+
+    this.tabMenu = [];
+    this.tabMenu.push({
       label: this.nameDashboard,
       icon: this.icon,
       id: this.cont.toString(),
       style: `background-color: ${this.corDoDashboard}`
     });
 
-    this.tabMenuDashboard.push({ icon: "fa fa-plus", id: "999" });
+    this.inicialService.incluirTabMenu(this.tabMenu[0]).subscribe(
+      response => {
+        console.log('deu certo');
+      },
+      erro => {
+        console.log("Deu ruim");
+      }
+    );
+
     this.nameDashboard = null;
 
     this.icon = "fa fa-pie-chart";
-    this.hasDashboards = false;
     this.corDoDashboard = "#1fc3c3";
 
-    this.dashboardInicial = this.tabMenuDashboard[0];
-
     this.dashboard = new Dashboard(this.cont, new Array<GridsterItem>());
-    this.dashboard.propriedades = {
-      itemChangeCallback: this.itemChange,
-      itemResizeCallback: this.itemResize,
-    };
+    this.dashboard.widgets = [
+      { cols: 1, rows: 1, y: 0, x: 1, dragEnabled: true, resizeEnabled: true },
+      { cols: 1, rows: 2, y: 0, x: 3, dragEnabled: true, resizeEnabled: true }
+    ];
+    this.dashboard.codigo = this.cont;
 
-    if (this.tabMenuDashboard.length == 2) {
-      this.dashboard.widgets = [
-        {cols: 2, rows: 1, y: 0, x: 0, dragEnabled: true, resizeEnabled: true},
-        {cols: 2, rows: 2, y: 0, x: 2, dragEnabled: true, resizeEnabled: true}
-      ];
-      this.widgets = this.dashboard.widgets;
-    } else {
-      this.dashboard.widgets = [
-        {cols: 1, rows: 1, y: 0, x: 1, dragEnabled: true, resizeEnabled: true},
-        {cols: 1, rows: 2, y: 0, x: 3, dragEnabled: true, resizeEnabled: true}
-      ];
-    }
+    this.inicialService.incluirDashboard(this.dashboard).subscribe(
+      response => {
+        this.iniciandoDashboard();
+      },
+      erro => console.log("Deu ruim!")
+    );
 
-    this.dashboards.set(this.cont, this.dashboard);
     this.fecharDialog();
   }
 
-  public switchDashboard(event, index: number) {
+  public buscaTabMenu() {
+
+  }
+
+  public switchDashboard(event, index: number, content: any) {
     this.index = index;
     this.event = event;
+    this.content = content;
     if (this.tabMenuDashboard.length - 1 === this.index) {
       this.open(this.content);
     } else {
-      const dashboard: Dashboard = this.dashboards.get(index + 1);
-      this.widgets = dashboard.widgets;
-      this.options = dashboard.propriedades;
+      this.inicialService.buscarDashboardId(this.dashboards.get(index + 1))
+      .subscribe((response) => {
+        this.widgets = response.widgets;
+        this.options = {
+          itemChangeCallback: this.itemChange,
+          itemResizeCallback: this.itemResize
+        };
+      }, (erro) => console.log('Deu ruim'));
     }
   }
 
@@ -652,7 +700,7 @@ export class InicialComponent implements OnInit {
   }
 
   public addItem() {
-   // this.dashboards.push();
+    // this.dashboards.push();
   }
 
   public open(content): void {
