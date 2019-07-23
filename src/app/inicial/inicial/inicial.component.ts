@@ -555,6 +555,7 @@ export class InicialComponent implements OnInit {
   ];
   public options: GridsterConfig;
   public widgets: GridsterItem[];
+  public widget: GridsterItem[];
   public event: any;
 
   constructor(
@@ -575,6 +576,7 @@ export class InicialComponent implements OnInit {
   public iniciandoDashboard() {
     this.inicialService.buscarTabMenu().subscribe(
       response => {
+        console.log('Ta chamando')
         this.tabMenuDashboard = response;
         if (this.tabMenuDashboard != null && this.tabMenuDashboard != []) {
           this.tabMenuDashboard.push({ icon: "fa fa-plus", id: "999" });
@@ -595,8 +597,10 @@ export class InicialComponent implements OnInit {
           this.cont = element.codigo;
         });
 
+        console.log(this.dashboards);
+
         this.hasDashboards = false;
-        if (this.dashs == null || this.dashs == []) {
+        if (this.dashs == null || this.dashs.length == 0) {
           this.hasDashboards = true;
         } else {
           this.widgets = this.dashs[0].widgets;
@@ -609,7 +613,7 @@ export class InicialComponent implements OnInit {
   }
 
   public criarDashboard() {
-    this.cont += 1;
+    this.cont = +this.cont + +1;
     if (this.tabMenuDashboard.length - 1 === this.index) {
       if (this.tabMenuDashboard.length > 0) {
         this.tabMenuDashboard = this.tabMenuDashboard.filter(
@@ -627,6 +631,7 @@ export class InicialComponent implements OnInit {
       style: `background-color: ${this.corDoDashboard}`
     });
 
+    console.log(this.tabMenu[0]);
     this.inicialService.incluirTabMenu(this.tabMenu[0]).subscribe(
       response => {
         console.log('deu certo');
@@ -642,24 +647,23 @@ export class InicialComponent implements OnInit {
     this.corDoDashboard = "#1fc3c3";
 
     this.dashboard = new Dashboard(this.cont, new Array<GridsterItem>());
+    this.dashboard.codigo = this.cont;
     this.dashboard.widgets = [
       { cols: 1, rows: 1, y: 0, x: 1, dragEnabled: true, resizeEnabled: true },
       { cols: 1, rows: 2, y: 0, x: 3, dragEnabled: true, resizeEnabled: true }
     ];
-    this.dashboard.codigo = this.cont;
+    this.dashboard.idMenuItem = this.cont;
 
+    console.log(this.dashboard);
     this.inicialService.incluirDashboard(this.dashboard).subscribe(
       response => {
+        console.log('ta chamando o início');
         this.iniciandoDashboard();
       },
       erro => console.log("Deu ruim!")
-    );
+      );
 
     this.fecharDialog();
-  }
-
-  public buscaTabMenu() {
-
   }
 
   public switchDashboard(event, index: number, content: any) {
@@ -669,7 +673,8 @@ export class InicialComponent implements OnInit {
     if (this.tabMenuDashboard.length - 1 === this.index) {
       this.open(this.content);
     } else {
-      this.inicialService.buscarDashboardId(this.dashboards.get(index + 1))
+      const id = this.index + 1;
+      this.inicialService.buscarDashboardId(id.toString())
       .subscribe((response) => {
         this.widgets = response.widgets;
         this.options = {

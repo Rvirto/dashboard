@@ -3,6 +3,8 @@ import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 export class Dashboard {
 
     public codigo: number;
+    public id: number;
+    public idMenuItem: number;
     public propriedades: GridsterConfig;
     public widgets = new Array<GridsterItem>();
 
