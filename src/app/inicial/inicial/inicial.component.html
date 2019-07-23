@@ -1,27 +1,52 @@
 <div class="container">
-
   <div class="ui-g-12" *ngIf="hasDashboards">
     <div class="card" style="height: 85vh">
       <div class="card-body">
         <h5 class="card-title">Dashboard {{ event }}</h5>
-        <p class="card-text">Você não possui nenhum Dashboard ainda. Que tal criar um?</p>
-        <div class="plus" style="cursor: pointer;" (click)="open(content)"></div>
+        <p class="card-text">
+          Você não possui nenhum Dashboard ainda. Que tal criar um?
+        </p>
+        <div
+          class="plus"
+          style="cursor: pointer;"
+          (click)="open(content)"
+        ></div>
       </div>
     </div>
   </div>
 
-  <p-tabMenu [model]="tabMenuDashboard" [activeItem]="dashboardInicial" *ngIf="!hasDashboards">
+  <p-tabMenu
+    [model]="tabMenuDashboard"
+    [activeItem]="dashboardInicial"
+    *ngIf="!hasDashboards"
+  >
     <ng-template pTemplate="item" let-item let-i="index">
+      <div style="position: relative; text-align: center; min-width: 10em">
         <a (click)="switchDashboard($event, i, content)">
-        <div [ngClass]="item.icon"
-         *ngIf="item.icon" style="font-size: 25px;">
-         {{item.label}}</div>
-    </a>
+          <div [ngClass]="item.icon" *ngIf="item.icon" style="font-size: 25px;">
+            {{ item.label }}
+          </div>
+        </a>
+
+        <a
+          tabindex="0"
+          class="ui-menuitem-icon"
+          (click)="closeItem($event, i)"
+          style="position: absolute; right: -1em; top: -.5em; padding: 0"
+          *ngIf="i !== ultimoRegistro"
+        >
+          <span class="pi pi-times"></span>
+        </a>
+      </div>
     </ng-template>
   </p-tabMenu>
 
   <div style="height: 80vh;">
-    <gridster [options]="options" *ngIf="!hasDashboards" style="border-radius: 5px;">
+    <gridster
+      [options]="options"
+      *ngIf="!hasDashboards"
+      style="border-radius: 5px;"
+    >
       <gridster-item [item]="item" *ngFor="let item of widgets">
       </gridster-item>
     </gridster>
@@ -30,40 +55,71 @@
   <ng-template #content let-modal>
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">New Dashboard</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        (click)="modal.dismiss()"
+      >
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
       <form>
         <div class="form-group">
-
           <mat-form-field class="ui-g-12 ui-md-12 ui-sm-12">
-            <textarea matInput placeholder="Dê um nome ao seu Dashboard" name="nomeDashboard" [(ngModel)]="nameDashboard"></textarea>
+            <textarea
+              matInput
+              placeholder="Dê um nome ao seu Dashboard"
+              name="nomeDashboard"
+              [(ngModel)]="nameDashboard"
+            ></textarea>
           </mat-form-field>
 
           <div class="ui-g-6 ui-md-6 ui-sm-12">
-            <input [(colorPicker)]="corDoDashboard" class="input-cor" [style.background]="corDoDashboard" [cpColorMode]="corDoDashboard" />
-            <label style="margin-left: 3px; color: gray;">Cor do Dashboard</label>
+            <input
+              [(colorPicker)]="corDoDashboard"
+              class="input-cor"
+              [style.background]="corDoDashboard"
+              [cpColorMode]="corDoDashboard"
+            />
+            <label style="margin-left: 3px; color: gray;"
+              >Cor do Dashboard</label
+            >
           </div>
 
           <div class="ui-g-6 ui-md-6 ui-sm-12">
-            <button class="input-icon {{icon}}" (click)="openIcon(iconModal)"></button>
-            <label style="margin-left: 3px; color: gray;">Ícone do Dashboard</label>
+            <button
+              class="input-icon {{ icon }}"
+              (click)="openIcon(iconModal)"
+            ></button>
+            <label style="margin-left: 3px; color: gray;"
+              >Ícone do Dashboard</label
+            >
           </div>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="criarDashboard()">
-        <i class="fa fa-plus-circle"></i> Criar</button>
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="criarDashboard()"
+      >
+        <i class="fa fa-plus-circle"></i> Criar
+      </button>
     </div>
   </ng-template>
 
   <ng-template #iconModal let-modalIcon>
     <div class="modal-header">
       <h4 class="modal-title" id="modalIcon-basic-title">Icon Picker</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modalIcon.dismiss()">
+      <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        (click)="modalIcon.dismiss()"
+      >
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -72,7 +128,10 @@
         <div class="form-group">
           <div *ngFor="let icon of icons">
             <div class="ui-g-1 ui-md-2 ui-sm-3">
-              <button class="icon-picker-list" (click)="atualizarIcon(icon.icon)">
+              <button
+                class="icon-picker-list"
+                (click)="atualizarIcon(icon.icon)"
+              >
                 <i [class]="icon.icon" style="margin-left: 6px;"></i>
               </button>
             </div>
@@ -81,5 +140,4 @@
       </form>
     </div>
   </ng-template>
-
 </div>

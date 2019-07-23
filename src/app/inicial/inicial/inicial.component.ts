@@ -28,6 +28,7 @@ export class InicialComponent implements OnInit {
   public dashs: Dashboard[] = [];
   public hasDashboards: boolean;
   public tabMenuDashboard: MenuItem[] = [];
+  public dashboardInicial: MenuItem;
   public tabMenu: MenuItem[] = [];
   public isPlusDashboard: boolean = false;
   public index: number;
@@ -557,6 +558,7 @@ export class InicialComponent implements OnInit {
   public widgets: GridsterItem[];
   public widget: GridsterItem[];
   public event: any;
+  public ultimoRegistro: number;
 
   constructor(
     private router: Router,
@@ -581,6 +583,11 @@ export class InicialComponent implements OnInit {
         if (this.tabMenuDashboard != null && this.tabMenuDashboard != []) {
           this.tabMenuDashboard.push({ icon: "fa fa-plus", id: "999" });
         }
+
+        this.dashboardInicial = this.tabMenuDashboard[0];
+
+        this.ultimoRegistro = this.tabMenuDashboard.length;
+        this.ultimoRegistro = this.ultimoRegistro -1;
       },
       erro => {
         console.log("Deu ruim");
