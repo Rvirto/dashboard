@@ -559,6 +559,7 @@ export class InicialComponent implements OnInit {
   public widget: GridsterItem[];
   public event: any;
   public ultimoRegistro: number;
+  public gridsterItem;
 
   constructor(
     private router: Router,
@@ -578,7 +579,6 @@ export class InicialComponent implements OnInit {
   public iniciandoDashboard() {
     this.inicialService.buscarTabMenu().subscribe(
       response => {
-        console.log('Ta chamando')
         this.tabMenuDashboard = response;
         if (this.tabMenuDashboard != null && this.tabMenuDashboard != []) {
           this.tabMenuDashboard.push({ icon: "fa fa-plus", id: "999" });
@@ -587,7 +587,7 @@ export class InicialComponent implements OnInit {
         this.dashboardInicial = this.tabMenuDashboard[0];
 
         this.ultimoRegistro = this.tabMenuDashboard.length;
-        this.ultimoRegistro = this.ultimoRegistro -1;
+        this.ultimoRegistro = this.ultimoRegistro - 1;
       },
       erro => {
         console.log("Deu ruim");
@@ -604,19 +604,28 @@ export class InicialComponent implements OnInit {
           this.cont = element.codigo;
         });
 
-        console.log(this.dashboards);
 
-        this.hasDashboards = false;
-        if (this.dashs == null || this.dashs.length == 0) {
-          this.hasDashboards = true;
-        } else {
-          this.widgets = this.dashs[0].widgets;
-        }
-      },
-      erro => {
-        console.log("Deu ruim");
+      this.hasDashboards = false;
+      if (this.dashs == null || this.dashs.length == 0) {
+        this.hasDashboards = true;
+      } else {
+        this.inicialService
+          .buscarDashboardId(this.dashboardInicial.id.toString())
+          .subscribe(
+            resp => {
+              this.widgets = resp.widgets;
+              this.options = {
+                itemChangeCallback: this.itemChange,
+                itemResizeCallback: this.itemResize
+              };
+            },
+            erro => {
+              console.log("Deu ruim");
+            }
+          );
       }
-    );
+      },
+      erro => console.log("Deu ruim"));
   }
 
   public criarDashboard() {
@@ -638,10 +647,9 @@ export class InicialComponent implements OnInit {
       style: `background-color: ${this.corDoDashboard}`
     });
 
-    console.log(this.tabMenu[0]);
     this.inicialService.incluirTabMenu(this.tabMenu[0]).subscribe(
       response => {
-        console.log('deu certo');
+        console.log("deu certo");
       },
       erro => {
         console.log("Deu ruim");
@@ -661,43 +669,69 @@ export class InicialComponent implements OnInit {
     ];
     this.dashboard.idMenuItem = this.cont;
 
-    console.log(this.dashboard);
     this.inicialService.incluirDashboard(this.dashboard).subscribe(
       response => {
-        console.log('ta chamando o início');
         this.iniciandoDashboard();
       },
       erro => console.log("Deu ruim!")
-      );
+    );
 
     this.fecharDialog();
   }
 
-  public switchDashboard(event, index: number, content: any) {
+  public switchDashboard(event, index: number, content: any, item) {
     this.index = index;
     this.event = event;
     this.content = content;
     if (this.tabMenuDashboard.length - 1 === this.index) {
       this.open(this.content);
     } else {
-      const id = this.index + 1;
-      this.inicialService.buscarDashboardId(id.toString())
-      .subscribe((response) => {
-        this.widgets = response.widgets;
-        this.options = {
-          itemChangeCallback: this.itemChange,
-          itemResizeCallback: this.itemResize
-        };
-      }, (erro) => console.log('Deu ruim'));
+      const id = item.id;
+      this.inicialService.buscarDashboardId(id.toString()).subscribe(
+        response => {
+          this.widgets = response.widgets;
+          this.options = {
+            itemChangeCallback: this.itemChange,
+            itemResizeCallback: this.itemResize
+          };
+        },
+        erro => console.log("Deu ruim")
+      );
     }
   }
 
+  public closeItem(event, item) {
+    const id = item.id;
+    this.inicialService.excluirDashboard(id.toString()).subscribe(
+      response => {
+        this.iniciandoDashboard();
+      },
+      erro => {
+        console.log("Deu ruim!");
+      }
+    );
+  }
+
   public itemChange(item, itemComponent) {
-    console.log("itemChanged", item, itemComponent);
+    this.gridsterItem = item;
+    this.atualizarWidgets(this.gridsterItem);
   }
 
   public itemResize(item, itemComponent) {
-    console.log("itemResized", item, itemComponent);
+    this.gridsterItem = item;
+    this.changedOptions.bind(resp => {
+      this.atualizarWidgets(this.gridsterItem);
+    })
+  }
+
+  public atualizarWidgets(item) {
+    this.inicialService.atualizarWidget(this.gridsterItem).subscribe(
+      (response) => {
+        this.iniciandoDashboard();
+      }, (erro) => {
+        console.log('Deu ruim');
+      }
+    );
   }
 
   public changedOptions(codigo: number) {

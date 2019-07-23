@@ -48,4 +48,16 @@ export class InicialServiceService {
   public buscarDashboardId(id: string): Observable<Dashboard> {
     return this.httpCliente.get<Dashboard>(`${this.urlDashboard}/${id}`);
   }
+
+  public excluirDashboard(id: string) {
+    return this.httpCliente.delete(`${this.urlTabMenu}/${id}`);
+  }
+
+  public atualizarWidget(widget) {
+    console.log(widget);
+    return this.httpCliente.put(`${this.urlTabMenu}/${widget.id}`, widget, {
+      observe: 'response',
+      responseType: 'text'
+    });
+  }
 }

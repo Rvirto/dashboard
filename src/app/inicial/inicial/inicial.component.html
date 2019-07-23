@@ -22,7 +22,7 @@
   >
     <ng-template pTemplate="item" let-item let-i="index">
       <div style="position: relative; text-align: center; min-width: 10em">
-        <a (click)="switchDashboard($event, i, content)">
+        <a (click)="switchDashboard($event, i, content, item)">
           <div [ngClass]="item.icon" *ngIf="item.icon" style="font-size: 25px;">
             {{ item.label }}
           </div>
@@ -31,7 +31,7 @@
         <a
           tabindex="0"
           class="ui-menuitem-icon"
-          (click)="closeItem($event, i)"
+          (click)="closeItem($event, item)"
           style="position: absolute; right: -1em; top: -.5em; padding: 0"
           *ngIf="i !== ultimoRegistro"
         >
