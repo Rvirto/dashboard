@@ -10,9 +10,9 @@ import { GridsterItem } from 'angular-gridster2';
 })
 export class InicialServiceService {
 
-  private urlTabMenu: string  = 'http://localhost:8080/menuItem';
-  private urlDashboard: string = 'http://localhost:8080/dashboard';
-  private urlGridster: string = 'http://localhost:8080/gridsterItem';
+  private urlTabMenu  = 'http://localhost:8080/menuItem';
+  private urlDashboard = 'http://localhost:8080/dashboard';
+  private urlGridster = 'http://localhost:8080/gridsterItem';
 
   constructor(private httpCliente: HttpClient) { }
 
@@ -54,10 +54,6 @@ export class InicialServiceService {
   }
 
   public atualizarWidget(widget) {
-    console.log(widget);
-    return this.httpCliente.put(`${this.urlTabMenu}/${widget.id}`, widget, {
-      observe: 'response',
-      responseType: 'text'
-    });
+    return this.httpCliente.put(`${this.urlGridster}/${widget.id}`, widget);
   }
 }

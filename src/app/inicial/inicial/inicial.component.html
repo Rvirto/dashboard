@@ -18,23 +18,20 @@
   <p-tabMenu
     [model]="tabMenuDashboard"
     [activeItem]="dashboardInicial"
-    *ngIf="!hasDashboards"
-  >
+    *ngIf="!hasDashboards">
     <ng-template pTemplate="item" let-item let-i="index">
-      <div style="position: relative; text-align: center; min-width: 10em">
+      <div style="position: relative; text-align: center; min-width: 2em">
         <a (click)="switchDashboard($event, i, content, item)">
           <div [ngClass]="item.icon" *ngIf="item.icon" style="font-size: 25px;">
             {{ item.label }}
           </div>
         </a>
 
-        <a
-          tabindex="0"
+        <a tabindex="0"
           class="ui-menuitem-icon"
           (click)="closeItem($event, item)"
           style="position: absolute; right: -1em; top: -.5em; padding: 0"
-          *ngIf="i !== ultimoRegistro"
-        >
+          *ngIf="i !== ultimoRegistro">
           <span class="pi pi-times"></span>
         </a>
       </div>
@@ -46,8 +43,9 @@
       [options]="options"
       *ngIf="!hasDashboards"
       style="border-radius: 5px;"
+      [style.background-color] = "corFundoDash"
     >
-      <gridster-item [item]="item" *ngFor="let item of widgets">
+      <gridster-item [item]="item" *ngFor="let item of widgets" style="cursor: pointer;">
       </gridster-item>
     </gridster>
   </div>
@@ -140,4 +138,23 @@
       </form>
     </div>
   </ng-template>
+
+  <p-toast position="center" key="c" (onClose)="onReject()"
+   [modal]="true" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="fa fa-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" (click)="onConfirm()" class="btn-block btn btn-success">Sim</button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" (click)="onReject()" style="color:white;" class="btn-block btn btn-warning">Não</button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 </div>

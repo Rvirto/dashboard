@@ -13,6 +13,9 @@ import { DialogModule } from 'primeng/components/dialog/dialog';
 import { GridsterModule } from 'angular-gridster2';
 import { TabMenuModule } from 'primeng/components/tabmenu/tabmenu';
 import { InicialServiceService } from './inicial/inicial-service.service';
+import {ToastModule} from 'primeng/components/toast/toast';
+import { MessageService } from 'primeng/components/common/messageservice';
+import { ButtonModule } from 'primeng/components/button/button';
 
 @NgModule({
   declarations: [InicialComponent],
@@ -29,13 +32,16 @@ import { InicialServiceService } from './inicial/inicial-service.service';
     ReactiveFormsModule,
     DialogModule,
     GridsterModule,
-    TabMenuModule
+    TabMenuModule,
+    ToastModule,
+    ButtonModule
   ],
   exports: [
     InicialComponent
   ],
   providers: [
-    InicialServiceService
+    InicialServiceService,
+    MessageService
   ]
 })
 export class InicialModule { }
