@@ -2,7 +2,7 @@
   <div class="ui-g-12" *ngIf="hasDashboards">
     <div class="card" style="height: 85vh">
       <div class="card-body">
-        <h5 class="card-title">Dashboard {{ event }}</h5>
+        <h5 class="card-title">Dashboard</h5>
         <p class="card-text">
           Você não possui nenhum Dashboard ainda. Que tal criar um?
         </p>
@@ -34,6 +34,14 @@
           *ngIf="i !== ultimoRegistro">
           <span class="pi pi-times"></span>
         </a>
+
+        <a tabindex="0"
+        class="ui-menuitem-icon"
+        (click)="adicionarItem($event, item)"
+        style="position: absolute; left: -1em; top: -.5em; padding: 0"
+        *ngIf="i !== ultimoRegistro">
+        <span class="pi pi-plus-circle"></span>
+      </a>
       </div>
     </ng-template>
   </p-tabMenu>
@@ -46,6 +54,7 @@
       [style.background-color] = "corFundoDash"
     >
       <gridster-item [item]="item" *ngFor="let item of widgets" style="cursor: pointer;">
+       <app-widget [widget]="item" (excluir)="excluirWidget(item)"></app-widget>
       </gridster-item>
     </gridster>
   </div>
@@ -157,4 +166,76 @@
         </div>
     </ng-template>
 </p-toast>
+
+<p-dialog header="Criação de Widget" [(visible)]="telaDeCriacao" [style]="{ width: '500px', backgroundColor: '#F2F2F2'}" [modal]="true">
+  <mat-form-field style="width: 100%">
+    <input matInput placeholder="Título do Widget" [(ngModel)]="widget.titulo">
+  </mat-form-field>
+
+  <br>
+  <p style="text-align: center"><b>Tipo de Métrica</b></p><br>
+  <mat-button-toggle-group #group="matButtonToggleGroup" style="width: 100%;">
+    <mat-button-toggle class="botoes-tipo-grafico" value="left" aria-label="Text align left"
+      (click)="direcionarDadosDeViews(1)">
+      <i class="fa fa-sort-numeric-asc icone-grande" aria-hidden="true"></i>
+      <div class="flex-config"><b>Numérico</b></div>
+    </mat-button-toggle>
+    <mat-button-toggle class="botoes-tipo-grafico " value="center" aria-label="Text align center"
+      (click)="direcionarDadosDeViews(2)">
+      <i class="fa fa-bar-chart icone-grande" aria-hidden="true"></i>
+      <div class="flex-config"><b>Barra</b></div>
+    </mat-button-toggle>
+    <mat-button-toggle class="botoes-tipo-grafico" value="right" aria-label="Text align right"
+      (click)="direcionarDadosDeViews(3)">
+      <i class="fa fa-pie-chart icone-grande" aria-hidden="true"></i>
+      <div class="flex-config"><b>Pizza</b></div>
+    </mat-button-toggle>
+    <mat-button-toggle class="botoes-tipo-grafico" value="justify" aria-label="Text align justify"
+      (click)="direcionarDadosDeViews(4)">
+      <i class="fa fa-line-chart icone-grande" aria-hidden="true"></i>
+      <div class="flex-config"><b>Linhas</b></div>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <br><br>
+  <div class="flex-config">
+    <span>
+      <b>
+        Serviço
+      </b>
+    </span>
+    <span>
+       {{viewSelecionada.nome}}
+    </span>
+  </div>
+
+  <div>
+    <br>
+    <b>Cor do Widget</b>
+    <div [(colorPicker)]="widget.cor" style="height: 30px; width: 30px; box-shadow: 1px 1px 3px black; float:right"
+      [style.background]="widget.cor" [cpPosition]="'top'">
+    </div>
+    <br>
+  </div>
+  <div *ngFor="let cor of listaDeCores">
+      <br>
+      <b>Cor Adicional</b>
+      <div [(colorPicker)]="cor.cor" style="height: 30px; width: 30px; box-shadow: 1px 1px 3px black; float:right"
+        [style.background]="cor.cor" [cpPosition]="'top'">
+      </div>
+      <br>
+    </div>
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <button mat-raised-button color="primary" class="btn-block" (click)="adicionarWidget()">Criar</button>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog header="Selecione seu serviço" [(visible)]="telaDeServicos" [style]="{ width: '500px', backgroundColor: '#F2F2F2'}"
+  (onHide)="fecharTelaServicos()">
+   <app-barra-dashboard-view [dados]="viewsSelecao" (getView)="obterView($event)"></app-barra-dashboard-view> 
+</p-dialog>
 </div>

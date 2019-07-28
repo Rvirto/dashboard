@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  GridsterConfig,
-  GridsterItem
-} from 'angular-gridster2';
-import { Dashboard } from './dashboard.model';
+import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { MenuItem } from 'primeng/components/common/menuitem';
 import { InicialServiceService } from './inicial-service.service';
 import { MessageService } from 'primeng/components/common/messageservice';
 import { Eventos } from './Eventos.model';
-
+import { View } from './view.model';
+import { Cor } from './cor.model';
+import { GrupoDeViews } from './grupo-views.model';
+import { Dashboard } from './dashboard.model';
+import { GridsterItemVO } from './gridster-item-vo.model';
+import { ViewService } from './view.service';
+import { WidgetService } from './widget.service';
 @Component({
   selector: 'app-inicial',
   templateUrl: './inicial.component.html',
@@ -18,10 +19,11 @@ import { Eventos } from './Eventos.model';
 })
 export class InicialComponent implements OnInit {
   constructor(
-    private router: Router,
     private modalService: NgbModal,
     private inicialService: InicialServiceService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private view: ViewService,
+    private widgetService: WidgetService
   ) {}
   public nameDashboard: string = null;
   public corDoDashboard = '#1fc3c3';
@@ -561,19 +563,27 @@ export class InicialComponent implements OnInit {
   ];
   public options: GridsterConfig;
   public widgets: GridsterItem[];
-  public widget: GridsterItem[];
+  public widget = new GridsterItemVO();
   public event: any;
   public ultimoRegistro: number;
   public gridsterItem;
   public item;
   public corFundoDash: string;
 
+  // NG
+  public telaDeCriacao: boolean;
+  public telaDeServicos: boolean;
+  public grupoDeViews = new GrupoDeViews();
+  public viewsSelecao = new Array<View>();
+  public listaDeCores = new Array<Cor>();
+  public viewSelecionada = new View();
+
   public static itemChange(item, itemComponent) {
     Eventos.atualizarWidget.emit(item);
   }
 
   public static itemResize(item, itemComponent) {
-    Eventos.redimensionarWidget.emit(item);
+    Eventos.atualizarWidget.emit(item);
   }
 
   ngOnInit(): void {
@@ -581,16 +591,19 @@ export class InicialComponent implements OnInit {
 
     this.options = {
       itemChangeCallback: InicialComponent.itemChange,
-      itemResizeCallback: InicialComponent.itemResize
+      itemResizeCallback: InicialComponent.itemResize,
+      gridType: 'fixed'
     };
 
     Eventos.atualizarWidget.subscribe(item => {
       this.atualizarWidgets(item);
     });
 
-    Eventos.redimensionarWidget.subscribe(item => {
+    Eventos.atualizarWidget.subscribe(item => {
       this.atualizarWidgets(item);
     });
+
+    this.buscarViews();
   }
 
   public iniciandoDashboard() {
@@ -630,6 +643,7 @@ export class InicialComponent implements OnInit {
             .buscarDashboardId(this.dashboardInicial.id.toString())
             .subscribe(
               resp => {
+                console.log(resp.widgets);
                 this.widgets = resp.widgets;
                 this.options = {
                   itemChangeCallback: InicialComponent.itemChange,
@@ -681,10 +695,6 @@ export class InicialComponent implements OnInit {
 
     this.dashboard = new Dashboard(this.cont, new Array<GridsterItem>());
     this.dashboard.codigo = this.cont;
-    this.dashboard.widgets = [
-      { cols: 1, rows: 1, y: 0, x: 1, dragEnabled: true, resizeEnabled: true },
-      { cols: 1, rows: 2, y: 0, x: 3, dragEnabled: true, resizeEnabled: true }
-    ];
     this.dashboard.idMenuItem = this.cont;
 
     this.inicialService.incluirDashboard(this.dashboard).subscribe(
@@ -793,17 +803,103 @@ export class InicialComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  /*public switchDashboard() {
-    if (this.options.codigo === 1) {
-      this.options = new Dashboard(2, new Array<GridsterItem>());
-      this.options.widgets =
-      [{ cols: 2, rows: 1, y: 0, x: 0, resizeEnabled: true, dragEnabled: true },
-      { cols: 2, rows: 2, y: 0, x: 2, resizeEnabled: true, dragEnabled: true }];
-    } else {
-      this.options = new Dashboard(1, new Array<GridsterItem>());
-      this.options.widgets =
-       [{ cols: 2, rows: 1, y: 0, x: 0, resizeEnabled: true, dragEnabled: true },
-      { cols: 1, rows: 1, y: 0, x: 2, resizeEnabled: true, dragEnabled: true }];
+  public adicionarItem(event, item) {
+    this.item = item;
+    this.telaDeCriacao = true;
+  }
+
+  public adicionarWidget(): void {
+    this.prepararWidget();
+    this.widget.dashboard = this.item.id;
+    this.widgetService.criarWidget(this.widget).subscribe(
+      response => {
+        this.iniciandoDashboard();
+      },
+      erro => console.log('deu ruim')
+    );
+    this.limparDados();
+    this.telaDeCriacao = false;
+  }
+
+  public abrirTelaCriacao(): void {
+    this.limparDados();
+    this.telaDeCriacao = true;
+  }
+
+  public abrirTelaServicos(): void {
+    this.telaDeServicos = true;
+    this.telaDeCriacao = false;
+  }
+
+  public fecharTelaServicos(): void {
+    this.telaDeServicos = false;
+    this.telaDeCriacao = true;
+  }
+
+  public buscarViews(): void {
+    this.view.buscarViews().subscribe(views => {
+      this.grupoDeViews = this.view.getGrupoDeViews(views);
+    });
+  }
+
+  public direcionarDadosDeViews(codigo: number) {
+    if (codigo === 1) {
+      this.viewsSelecao = this.grupoDeViews.numerico;
+      this.widget.tipoGrafico = 'NUMERICO';
+    } else if (codigo === 2) {
+      this.viewsSelecao = this.grupoDeViews.barra;
+      this.widget.tipoGrafico = 'BARRA';
+    } else if (codigo === 3) {
+      this.viewsSelecao = this.grupoDeViews.pizza;
+      this.widget.tipoGrafico = 'PIZZA';
+    } else if (codigo === 4) {
+      this.viewsSelecao = this.grupoDeViews.linha;
+      this.widget.tipoGrafico = 'LINHA';
     }
-  }*/
+
+    setTimeout(() => {
+      this.abrirTelaServicos();
+    }, 500);
+  }
+
+  public obterView(view: View) {
+    this.fecharTelaServicos();
+    this.viewSelecionada = view;
+    this.listaDeCores = [];
+    for (let i = 0; i < view.quantidadeDeCores; i++) {
+      this.listaDeCores.push(new Cor('#fff'));
+    }
+  }
+
+  public prepararWidget(): void {
+    this.widget.view = this.viewSelecionada.codigoView;
+    this.listaDeCores.forEach(cor => {
+      this.widget.cor = this.widget.cor + ';' + cor.cor;
+    });
+    this.widget.dragEnabled = true;
+    this.widget.resizeEnabled = true;
+  }
+
+  private limparDados(): void {
+    this.widget = new GridsterItemVO();
+    this.viewSelecionada = new View();
+    this.listaDeCores = [];
+    this.buscarViews();
+  }
+
+  public excluirWidget(widget: GridsterItemVO) {
+    this.widgetService
+      .excluirWidget(widget.id)
+      .subscribe(() => console.log('Deu certo!'));
+    for (let i = 0; i < this.widgets.length; i++) {
+      if (this.verificarWidget(this.widgets[i], widget.id)) {
+        this.widgets.splice(i, 1);
+      }
+    }
+    this.options.api.optionsChanged();
+  }
+
+  public verificarWidget(widget: GridsterItem, id: string): boolean {
+    return widget.id === id ? true : false;
+  }
 }

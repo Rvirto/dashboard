@@ -1,0 +1,52 @@
+<p-dialog appendTo="body" header="Criação de Widget" [(visible)]="telaDeEdicao" [style]="{ width: '500px'}" [modal]="true">
+    <mat-form-field style="width: 100%">
+      <input matInput placeholder="Título do Widget" [(ngModel)]="widget.titulo">
+    </mat-form-field>
+    <br><br>
+    <div class="flex-config">
+      
+    </div>
+  
+    <div>
+      <br>
+      <b>Cor do Widget</b>
+      <div [(colorPicker)]="cores[0].cor" style="height: 30px; width: 30px; box-shadow: 1px 1px 3px black; float:right"
+        [style.background]="cores[0].cor" [cpPosition]="'top'">
+      </div>
+      <br>
+    </div>
+  </p-dialog>
+
+<div [style.background-color]="cores[0].cor" style="height: 100%">
+
+  <div class="corpo flex-config" *ngIf="menuExibido === 'inicio'">
+    <i class="fa fa-trash" aria-hidden="true" (click)="excluirWidget()"></i>
+  </div>
+  <p style="text-align: center;">
+    <b>{{widget.titulo}}</b>
+  </p>
+  <div style="height: calc(100% - 70px); margin-top: -30px;">
+
+    <div class="corpo-data" *ngIf="widget.tipoGrafico == 'NUMERICO'">
+
+      <span [style.color]="cores[1].cor" style="font-size: 70px" class="texto">
+        {{data}}
+      </span>
+
+    </div>
+
+    <div *ngIf="widget.tipoGrafico == 'BARRA'">
+      <p-chart type="bar" [data]="data"></p-chart>
+    </div>
+
+    <div *ngIf="widget.tipoGrafico == 'PIZZA'">
+      Pizza
+    </div>
+
+    <div *ngIf="widget.tipoGrafico == 'LINHA'">
+      Linha
+    </div>
+
+
+  </div>
+</div>
