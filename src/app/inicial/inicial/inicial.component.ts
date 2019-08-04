@@ -578,6 +578,7 @@ export class InicialComponent implements OnInit {
   public listaDeCores = new Array<Cor>();
   public viewSelecionada = new View();
 
+
   public static itemChange(item, itemComponent) {
     Eventos.atualizarWidget.emit(item);
   }

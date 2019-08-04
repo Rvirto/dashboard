@@ -31,6 +31,19 @@ export class WidgetComponent implements OnInit, OnChanges {
 
   data: any;
 
+ // GRAFICO CORREÇÃO
+ public chartOptions = {
+  scales: {
+    yAxes: [{
+      ticks: {
+        stepSize: 2,
+        beginAtZero: true
+      }
+    }]
+  }
+}
+
+
   constructor(
     private viewService: ViewService,
     private dataService: DataService
@@ -77,6 +90,8 @@ export class WidgetComponent implements OnInit, OnChanges {
   }
 
   public getDadosDoGrafico(): void {
+    console.log(this.widget);
+    
     if (this.widget.tipoGrafico === 'NUMERICO') {
       this.viewService
         .getView(this.widget.view)
@@ -92,7 +107,39 @@ export class WidgetComponent implements OnInit, OnChanges {
         this.data = this.dataService.getDadosGrafico(
           this.widget.view,
           dadosDeEntrada,
-          cores
+          cores,
+          this.widget.tipoGrafico
+        );
+      });
+    } else if (this.widget.tipoGrafico === 'PIZZA') {
+      let dadosDeEntrada: any;
+      this.viewService.getView(this.widget.view).subscribe(dados => {
+        dadosDeEntrada = dados;
+        const cores = new Array<Cor>();
+        for (let i = 1; i < this.cores.length; i++) {
+          cores.push(this.cores[i]);
+        }
+        this.data = this.dataService.getDadosGrafico(
+          this.widget.view,
+          dadosDeEntrada,
+          cores,
+          this.widget.tipoGrafico
+        );
+        console.log(this.data);
+      });
+    } else if (this.widget.tipoGrafico === 'LINHA') {
+      let dadosDeEntrada: any;
+      this.viewService.getView(this.widget.view).subscribe(dados => {
+        dadosDeEntrada = dados;
+        const cores = new Array<Cor>();
+        for (let i = 1; i < this.cores.length; i++) {
+          cores.push(this.cores[i]);
+        }
+        this.data = this.dataService.getDadosGrafico(
+          this.widget.view,
+          dadosDeEntrada,
+          cores,
+          this.widget.tipoGrafico
         );
         console.log(this.data);
       });

@@ -35,16 +35,16 @@
 
     </div>
 
-    <div *ngIf="widget.tipoGrafico == 'BARRA'">
-      <p-chart type="bar" [data]="data"></p-chart>
+    <div class="corpo-data" *ngIf="widget.tipoGrafico == 'BARRA'">
+      <p-chart type="bar" [data]="data" style="width: 90%; height: 90%;"></p-chart>
     </div>
 
-    <div *ngIf="widget.tipoGrafico == 'PIZZA'">
-      Pizza
+    <div class="corpo-data" *ngIf="widget.tipoGrafico == 'PIZZA'">
+      <p-chart type="pie" [data]="data" style="width: 90%; height: 90%;"></p-chart>
     </div>
 
-    <div *ngIf="widget.tipoGrafico == 'LINHA'">
-      Linha
+    <div class="corpo-data" *ngIf="widget.tipoGrafico == 'LINHA'">
+      <p-chart type="line" [data]="data" style="width: 90%; height: 90%;"></p-chart>
     </div>
 
 
